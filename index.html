@@ -1,0 +1,405 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>De Tuinunit</title>
+<meta name="description" content="Ontwerpstudie voor een tuinunit van Douglas: schuur, poort en veranda in één lijn achter het zwembad, met glazen kinderhek.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@112,700;112,800;100,500&family=Figtree:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: een bouwbord bij avond. Donkere ondergrond van het zwarte rabat, Douglas-honing als enige accent,
+   maatvoering in mono zoals op een bouwtekening. Bewust één (donkere) uitstraling. */
+:root {
+  --nacht: #141413;        /* ondergrond: zwart rabat */
+  --kool: #1E1D1B;         /* panelen */
+  --lijn: rgba(240, 232, 220, 0.14);
+  --tekst: #EFE8DE;
+  --stil: #ADA497;
+  --douglas: #D9A464;      /* accent */
+  --water: #6FC3C9;        /* zwembad, alleen in de plattegrond */
+  --f-kop: "Archivo", "Helvetica Neue", Arial, sans-serif;
+  --f-tekst: "Figtree", "Helvetica Neue", Arial, sans-serif;
+  --f-maat: "JetBrains Mono", ui-monospace, Menlo, monospace;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin: 0; background: var(--nacht); color: var(--tekst); font: 400 1.0625rem/1.65 var(--f-tekst);
+  padding-left: max(0px, env(safe-area-inset-left, 0px)); padding-right: max(0px, env(safe-area-inset-right, 0px)); }
+img { max-width: 100%; display: block; }
+a { color: var(--douglas); }
+.wrap { max-width: 1180px; margin-inline: auto; padding-left: max(20px, env(safe-area-inset-left, 0px)); padding-right: max(20px, env(safe-area-inset-right, 0px)); }
+h1, h2, h3 { font-family: var(--f-kop); font-stretch: 112%; font-weight: 800; letter-spacing: -0.01em; line-height: 1.05; text-wrap: balance; margin: 0; }
+h2 { font-size: clamp(1.9rem, 4vw, 3rem); }
+h3 { font-size: 1.3rem; font-weight: 700; }
+.oog { font: 500 0.75rem var(--f-maat); letter-spacing: 0.14em; text-transform: uppercase; color: var(--douglas); }
+p { margin: 0; max-width: 64ch; }
+section { padding-block: clamp(64px, 9vw, 120px); border-top: 1px solid var(--lijn); }
+
+/* hero */
+.hero { position: relative; min-height: min(92vh, 900px); display: grid; align-items: end; overflow: hidden; border: 0; padding: 0; }
+.hero img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.hero::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(20,20,19,0.15) 0%, rgba(20,20,19,0) 35%, rgba(20,20,19,0.85) 82%, var(--nacht) 100%); }
+.hero .wrap { position: relative; z-index: 1; padding-block: 0 clamp(36px, 6vw, 72px); display: grid; gap: 18px; width: 100%; }
+.hero h1 { font-size: clamp(2.8rem, 8.5vw, 6.6rem); text-transform: uppercase; }
+.hero p { font-size: 1.15rem; color: var(--tekst); }
+.knoppen { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 6px; }
+.knop { display: inline-flex; align-items: center; gap: 10px; padding: 12px 20px; border-radius: 999px; font: 600 0.95rem var(--f-tekst);
+  text-decoration: none; border: 1px solid var(--douglas); color: var(--nacht); background: var(--douglas); }
+.knop.leeg { background: transparent; color: var(--tekst); border-color: var(--lijn); }
+.knop:hover { filter: brightness(1.08); }
+.knop:focus-visible, button:focus-visible, .tegel:focus-visible { outline: 2px solid var(--douglas); outline-offset: 3px; }
+
+/* maatlat */
+.maatlat { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-top: 1px solid var(--lijn); border-bottom: 1px solid var(--lijn); margin-top: 48px; }
+.maatlat div { padding: 18px 16px; border-left: 1px solid var(--lijn); display: grid; gap: 2px; }
+.maatlat div:first-child { border-left: 0; padding-left: 0; }
+.maatlat b { font: 500 clamp(1.3rem, 2.4vw, 1.8rem) var(--f-maat); color: var(--tekst); font-variant-numeric: tabular-nums; }
+.maatlat span { font-size: 0.85rem; color: var(--stil); }
+
+.twee { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: clamp(28px, 5vw, 72px); align-items: start; }
+.stapel { display: grid; gap: 18px; }
+.stapel p + p { margin-top: 0; }
+.stil { color: var(--stil); }
+
+/* plattegrond */
+.plan { background: var(--kool); border: 1px solid var(--lijn); border-radius: 6px; padding: 12px; overflow-x: auto; }
+.plan svg { width: 100%; min-width: 520px; height: auto; display: block; }
+.plan text { font-family: var(--f-maat); }
+.legenda { display: flex; flex-wrap: wrap; gap: 8px 18px; margin-top: 14px; font-size: 0.85rem; color: var(--stil); }
+.legenda i { display: inline-block; width: 12px; height: 12px; border-radius: 2px; margin-right: 6px; vertical-align: -1px; }
+
+/* zones */
+.zones { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 22px; margin-top: 44px; }
+.zone { display: grid; gap: 14px; align-content: start; }
+.zone img { aspect-ratio: 4 / 3; object-fit: cover; border-radius: 4px; }
+.zone .maat { font: 500 0.8rem var(--f-maat); color: var(--douglas); }
+.zone p { font-size: 0.97rem; color: var(--stil); }
+
+/* galerij */
+.schakel { display: inline-flex; border: 1px solid var(--lijn); border-radius: 999px; padding: 4px; gap: 4px; margin-top: 24px; }
+.schakel button { font: 500 0.85rem var(--f-tekst); color: var(--tekst); background: none; border: 0; border-radius: 999px; padding: 7px 16px; cursor: pointer; }
+.schakel button[aria-pressed="true"] { background: var(--douglas); color: var(--nacht); }
+.raster { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 12px; margin-top: 28px; }
+.tegel { grid-column: span 4; position: relative; padding: 0; border: 0; background: none; cursor: zoom-in; border-radius: 4px; overflow: hidden; color: inherit; text-align: left; }
+.tegel.breed { grid-column: span 8; }
+.tegel img { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; transition: transform .5s ease; }
+.tegel:hover img { transform: scale(1.03); }
+.tegel span { position: absolute; left: 0; right: 0; bottom: 0; padding: 26px 12px 10px; font-size: 0.85rem; background: linear-gradient(transparent, rgba(0,0,0,0.7)); }
+
+/* impressies */
+.impressies { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-top: 36px; }
+.impressies .tegel { grid-column: auto; }
+.label-ai { display: inline-block; font: 500 0.7rem var(--f-maat); letter-spacing: 0.1em; text-transform: uppercase; border: 1px solid var(--lijn); border-radius: 3px; padding: 2px 6px; color: var(--stil); margin-left: 8px; vertical-align: 3px; }
+
+/* materialen */
+.materialen { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 48px; margin-top: 36px; }
+.mat { display: grid; grid-template-columns: 44px minmax(0, 1fr); gap: 14px; padding: 16px 0; border-top: 1px solid var(--lijn); align-items: start; }
+.mat i { width: 44px; height: 44px; border-radius: 3px; border: 1px solid var(--lijn); }
+.mat b { display: block; font-weight: 600; }
+.mat small { color: var(--stil); font-size: 0.9rem; }
+.mat code { font: 400 0.8rem var(--f-maat); color: var(--douglas); }
+
+/* open punten */
+.punten { list-style: none; padding: 0; margin: 32px 0 0; display: grid; gap: 0; }
+.punten li { display: grid; grid-template-columns: 9rem minmax(0, 1fr); gap: 18px; padding: 16px 0; border-top: 1px solid var(--lijn); }
+.punten li b { font: 500 0.78rem var(--f-maat); letter-spacing: 0.08em; text-transform: uppercase; color: var(--douglas); padding-top: 3px; }
+
+/* slot */
+.slot { text-align: left; }
+.slot .wrap { display: grid; gap: 22px; justify-items: start; }
+footer { padding-block: 32px 48px; border-top: 1px solid var(--lijn); color: var(--stil); font-size: 0.85rem; }
+
+dialog { border: 0; padding: 0; background: transparent; max-width: 96vw; max-height: 94vh; }
+dialog::backdrop { background: rgba(10,10,9,0.92); }
+dialog img { max-height: 86vh; width: auto; border-radius: 4px; }
+dialog p { color: var(--tekst); font-size: 0.9rem; margin-top: 10px; }
+dialog button { position: fixed; top: max(14px, env(safe-area-inset-top, 0px)); right: max(14px, env(safe-area-inset-right, 0px)); font: 600 0.9rem var(--f-tekst); background: var(--kool); color: var(--tekst); border: 1px solid var(--lijn); border-radius: 999px; padding: 8px 14px; cursor: pointer; }
+
+@media (max-width: 860px) {
+  .twee { grid-template-columns: 1fr; }
+  .zones { grid-template-columns: 1fr; }
+  .tegel, .tegel.breed { grid-column: span 12; }
+  .materialen { grid-template-columns: 1fr; }
+  .maatlat { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .maatlat div:nth-child(3) { border-left: 0; padding-left: 0; }
+  .maatlat div:nth-child(n+3) { border-top: 1px solid var(--lijn); }
+  .impressies { grid-template-columns: 1fr; }
+  .punten li { grid-template-columns: 1fr; gap: 4px; }
+}
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .tegel img { transition: none; } }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <img src="img/vr1-avond.jpg" alt="De tuinunit bij avond: lattengevel van de schuur achter het zwembad, poort en veranda met lampen aan">
+  <div class="wrap">
+    <div class="oog">Ontwerpstudie · tuin achter het huis</div>
+    <h1>De tuin&shy;unit</h1>
+    <p>Schuur, poort en veranda in één houten lijn achter het zwembad. Rustig zitten aan de zijkant, zicht op het water, en een glazen hek zodat de kleine er niet zomaar bij kan.</p>
+    <div class="knoppen">
+      <a class="knop" href="3d.html">Loop door het 3D-model →</a>
+      <a class="knop leeg" href="#ontwerp">Bekijk het ontwerp</a>
+    </div>
+  </div>
+</header>
+
+<main>
+<section id="ontwerp">
+  <div class="wrap">
+    <div class="twee">
+      <div class="stapel">
+        <div class="oog">Het idee</div>
+        <h2>Eén volume, drie functies</h2>
+      </div>
+      <div class="stapel">
+        <p>De eerste versie had de veranda direct achter het zwembad. Zitten met je rug naar de schutting en je neus boven de lamellenkast bleek niet ontspannen. Daarom is het omgedraaid: de <strong>schuur</strong> staat nu achter het bad, precies even breed als het water, en de <strong>veranda</strong> schuift naar de zijkant, waar hij een meter dieper mag.</p>
+        <p>De gevel van de schuur aan het water is een wand van verticale thermowood-latten met drie wandlampen. Overdag is het de achtergrond van het zwembad, 's avonds spiegelt het licht in het water. Tegelijk sluit die wand het zwembad aan de achterkant af.</p>
+        <p class="stil">De <strong>poort</strong> in het midden ligt buiten het hek. Zo kom je bij de schuur en de achteruitgang zonder langs het water te lopen.</p>
+      </div>
+    </div>
+    <div class="maatlat" aria-label="Hoofdmaten">
+      <div><b>10,00 m</b><span>totale breedte</span></div>
+      <div><b>2,75 / 3,75 m</b><span>diepte schuur / veranda</span></div>
+      <div><b>3,00 m</b><span>hoogte tot daktrim</span></div>
+      <div><b>1,00 m</b><span>glazen hek rond het bad</span></div>
+    </div>
+  </div>
+</section>
+
+<section id="plattegrond">
+  <div class="wrap">
+    <div class="twee">
+      <div class="stapel">
+        <div class="oog">Plattegrond</div>
+        <h2>Zo ligt het in de tuin</h2>
+        <p class="stil">Bovenaanzicht op schaal, maten in millimeters. Het huis ligt onderaan. Het hek staat aan de huiszijde één tegel van het water en aan de oostzijde twee. De achterkant van het zwembad wordt afgesloten door de schuurgevel.</p>
+        <div class="legenda" aria-hidden="true">
+          <span><i style="background:#D9A464"></i>Douglas constructie</span>
+          <span><i style="background:#3A3936"></i>schuur (dicht)</span>
+          <span><i style="background:#6FC3C9"></i>zwembad</span>
+          <span><i style="background:transparent;border:2px solid #CFE8EA"></i>glazen hek</span>
+        </div>
+      </div>
+      <figure class="plan" style="margin:0">
+        <svg viewBox="-40 -60 760 820" role="img" aria-labelledby="plantitel">
+          <title id="plantitel">Plattegrond van de tuinunit met zwembad, hek en terras</title>
+          <defs>
+            <pattern id="grind" width="6" height="6" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="1" fill="#8E897F"/><circle cx="5" cy="5" r="0.8" fill="#6E6A62"/></pattern>
+            <pattern id="latten" width="6" height="6" patternUnits="userSpaceOnUse"><rect width="6" height="6" fill="#4B3A28"/><rect width="3" height="6" fill="#B07A4A"/></pattern>
+            <marker id="pijl" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#ADA497"/></marker>
+          </defs>
+          <!-- schaal: 1 m = 60; x' = x*60 ; y' = (15.6 - y)*60 -->
+          <rect x="-7" y="15" width="28" height="696" fill="#4A4A48"/>
+          <text x="-30" y="470" fill="#ADA497" font-size="13" transform="rotate(-90 -30 470)">leistenen muur</text>
+          <rect x="642" y="14" width="3" height="696" fill="#6B5240"/>
+          <rect x="-7" y="14" width="652" height="3" fill="#6B5240"/>
+          <text x="560" y="8" fill="#ADA497" font-size="12">schutting</text>
+          <!-- terras -->
+          <rect x="21" y="17" width="621" height="693" fill="#2A2927"/>
+          <!-- zwembad -->
+          <rect x="29" y="186" width="277" height="456" fill="#5E5D58"/>
+          <rect x="48" y="204" width="240" height="420" fill="#6FC3C9"/>
+          <text x="168" y="440" fill="#14302F" font-size="15" text-anchor="middle" font-weight="500">zwembad</text>
+          <text x="168" y="460" fill="#14302F" font-size="12" text-anchor="middle">4.000 × 7.000</text>
+          <!-- lamellenkast -->
+          <rect x="29" y="189" width="277" height="45" fill="#4F6662" stroke="#9C9A94" stroke-width="2"/>
+          <text x="168" y="216" fill="#E6EEEC" font-size="11" text-anchor="middle">lamellenkast h 500</text>
+          <!-- unit: dakomtrek -->
+          <path d="M26 189 H412 V249 H638 V18 H26 Z" fill="none" stroke="#ADA497" stroke-width="1.2" stroke-dasharray="6 5"/>
+          <!-- schuur -->
+          <rect x="32" y="18" width="281" height="165" fill="#3A3936"/>
+          <rect x="32" y="177" width="281" height="6" fill="url(#latten)"/>
+          <text x="172" y="96" fill="#EFE8DE" font-size="16" text-anchor="middle" font-weight="500">schuur</text>
+          <text x="172" y="116" fill="#ADA497" font-size="12" text-anchor="middle">4.620 × 2.750</text>
+          <rect x="304" y="78" width="9" height="54" fill="#EFE8DE"/>
+          <text x="298" y="70" fill="#ADA497" font-size="10" text-anchor="end">deur</text>
+          <!-- poort -->
+          <rect x="313" y="18" width="99" height="165" fill="url(#grind)"/>
+          <rect x="345" y="149" width="48" height="30" fill="#A9A49A"/><rect x="345" y="110" width="48" height="30" fill="#A9A49A"/>
+          <rect x="345" y="72" width="48" height="30" fill="#A9A49A"/><rect x="345" y="34" width="48" height="30" fill="#A9A49A"/>
+          <rect x="333" y="20" width="60" height="5" fill="#D9A464"/>
+          <text x="362" y="-14" fill="#ADA497" font-size="11" text-anchor="middle">poortdeur → achterom</text>
+          <!-- veranda -->
+          <rect x="412" y="18" width="220" height="225" fill="#4B3A28" opacity="0.55"/>
+          <rect x="412" y="18" width="220" height="6" fill="url(#latten)"/><rect x="626" y="18" width="6" height="225" fill="url(#latten)"/>
+          <rect x="486" y="70" width="72" height="120" fill="none" stroke="#CFE8EA" stroke-width="1.5" stroke-dasharray="3 3"/>
+          <text x="522" y="64" fill="#CFE8EA" font-size="10" text-anchor="middle">lichtstraat</text>
+          <path d="M464 30 H620 V168 H569 V81 H464 Z" fill="#CFC5B3" opacity="0.85"/>
+          <rect x="480" y="92" width="72" height="42" fill="#A0703F"/>
+          <text x="520" y="222" fill="#EFE8DE" font-size="16" text-anchor="middle" font-weight="500">veranda</text>
+          <text x="520" y="238" fill="#ADA497" font-size="12" text-anchor="middle">3.580 × 3.750</text>
+          <!-- staanders -->
+          <g fill="#D9A464">
+            <rect x="32" y="174" width="9" height="9"/><rect x="305" y="174" width="9" height="9"/><rect x="412" y="174" width="9" height="9"/>
+            <rect x="412" y="234" width="9" height="9"/><rect x="623" y="234" width="9" height="9"/>
+            <rect x="32" y="18" width="9" height="9"/><rect x="305" y="18" width="9" height="9"/><rect x="412" y="18" width="9" height="9"/><rect x="623" y="18" width="9" height="9"/>
+          </g>
+          <!-- glazen hek -->
+          <g stroke="#CFE8EA" stroke-width="3" fill="none" stroke-linecap="round">
+            <path d="M24 648 H156"/><path d="M216 648 H345 V330"/><path d="M345 270 V186 H316"/>
+          </g>
+          <g stroke="#CFE8EA" stroke-width="1.2" fill="none" stroke-dasharray="3 3">
+            <path d="M156 648 A60 60 0 0 1 216 648" /><path d="M345 330 A60 60 0 0 1 345 270"/>
+          </g>
+          <text x="186" y="676" fill="#CFE8EA" font-size="11" text-anchor="middle">poortje</text>
+          <text x="356" y="304" fill="#CFE8EA" font-size="11">poortje</text>
+          <text x="356" y="480" fill="#CFE8EA" font-size="11" transform="rotate(90 356 480)">glazen hek h 1.000</text>
+          <!-- terrastafel -->
+          <rect x="453" y="456" width="132" height="57" fill="#A0703F" opacity="0.9"/>
+          <circle cx="519" cy="484" r="90" fill="none" stroke="#ADA497" stroke-width="1" stroke-dasharray="2 4"/>
+          <text x="519" y="590" fill="#ADA497" font-size="11" text-anchor="middle">eettafel + parasol</text>
+          <!-- maatlijnen -->
+          <g stroke="#ADA497" stroke-width="1" marker-start="url(#pijl)" marker-end="url(#pijl)">
+            <line x1="32" y1="-36" x2="309" y2="-36"/><line x1="309" y1="-36" x2="417" y2="-36"/><line x1="417" y1="-36" x2="632" y2="-36"/>
+            <line x1="684" y1="18" x2="684" y2="243"/><line x1="-24" y1="18" x2="-24" y2="183"/>
+          </g>
+          <g fill="#EFE8DE" font-size="12" text-anchor="middle">
+            <text x="170" y="-42">4.620</text><text x="363" y="-42">1.800</text><text x="524" y="-42">3.580</text>
+            <text x="700" y="134" transform="rotate(90 700 134)">3.750</text>
+            <text x="-36" y="100" transform="rotate(-90 -36 100)">2.750</text>
+          </g>
+          <text x="40" y="742" fill="#ADA497" font-size="12">↓ naar het huis</text>
+        </svg>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<section id="zones">
+  <div class="wrap">
+    <div class="oog">Drie zones</div>
+    <h2>Werken, doorlopen, zitten</h2>
+    <div class="zones">
+      <article class="zone">
+        <img src="img/vr5-dag.jpg" alt="Schuurgevel met verticale latten achter het zwembad" loading="lazy">
+        <div class="maat">schuur · 4.620 × 2.750 mm</div>
+        <h3>Schuur achter het water</h3>
+        <p>Dicht volume met zwart rabat, alleen aan de zwembadkant een gevel van thermowood-latten 28×45 op zwart. De deur zit in de zijwand aan de poort, zodat je de schuur nooit vanuit het zwembad in hoeft.</p>
+      </article>
+      <article class="zone">
+        <img src="img/vr4-dag.jpg" alt="Doorkijk door de poort met open balken en houten poortdeur" loading="lazy">
+        <div class="maat">poort · 1.800 mm breed</div>
+        <h3>Poort met open dak</h3>
+        <p>Open dakbalken, stapstenen in grind en achterin een poortdeur van latten in een zwart stalen kader, met een glazen bovenlicht tot aan de balk. Hier loop je achterom zonder langs het water te komen.</p>
+      </article>
+      <article class="zone">
+        <img src="img/vr6-dag.jpg" alt="Loungehoek in de veranda met lattenwanden en lichtstraat" loading="lazy">
+        <div class="maat">veranda · 3.580 × 3.750 mm</div>
+        <h3>Veranda aan de zijkant</h3>
+        <p>Achter- en zijwand dicht met latten, een lattenplafond met inbouwspots en een glazen lichtstraat van 1.200 × 2.000 mm boven de salontafel. De loungebank kijkt over het zwembad naar het huis.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section id="beelden">
+  <div class="wrap">
+    <div class="oog">Renders uit het model</div>
+    <h2>Overdag en 's avonds</h2>
+    <p class="stil" style="margin-top:14px">Alle beelden komen rechtstreeks uit het 3D-model, met de echte maten.</p>
+    <div class="schakel" role="group" aria-label="Tijdstip">
+      <button type="button" id="tDag" aria-pressed="true">Overdag</button>
+      <button type="button" id="tAvond" aria-pressed="false">Avond</button>
+    </div>
+    <div class="raster" id="rasterDag">
+      <button class="tegel breed" data-src="img/vr1-dag.jpg"><img src="img/vr1-dag.jpg" alt="" loading="lazy"><span>Vanaf het terras</span></button>
+      <button class="tegel" data-src="img/vr2-dag.jpg"><img src="img/vr2-dag.jpg" alt="" loading="lazy"><span>Vogelvlucht</span></button>
+      <button class="tegel" data-src="img/vr3-dag.jpg"><img src="img/vr3-dag.jpg" alt="" loading="lazy"><span>Vanuit de lounge naar het huis</span></button>
+      <button class="tegel" data-src="img/vr7-dag.jpg"><img src="img/vr7-dag.jpg" alt="" loading="lazy"><span>Zijaanzicht met het hek</span></button>
+      <button class="tegel" data-src="img/vr5-dag.jpg"><img src="img/vr5-dag.jpg" alt="" loading="lazy"><span>Schuurgevel aan het water</span></button>
+      <button class="tegel" data-src="img/vr4-dag.jpg"><img src="img/vr4-dag.jpg" alt="" loading="lazy"><span>De poort</span></button>
+      <button class="tegel" data-src="img/vr6-dag.jpg"><img src="img/vr6-dag.jpg" alt="" loading="lazy"><span>In de veranda</span></button>
+    </div>
+    <div class="raster" id="rasterAvond" hidden>
+      <button class="tegel breed" data-src="img/vr1-avond.jpg"><img src="img/vr1-avond.jpg" alt="" loading="lazy"><span>Vanaf het terras</span></button>
+      <button class="tegel" data-src="img/vr5-avond.jpg"><img src="img/vr5-avond.jpg" alt="" loading="lazy"><span>Lattengevel spiegelt in het water</span></button>
+      <button class="tegel" data-src="img/vr6-avond.jpg"><img src="img/vr6-avond.jpg" alt="" loading="lazy"><span>De lounge bij lamplicht</span></button>
+    </div>
+  </div>
+</section>
+
+<section id="sfeer">
+  <div class="wrap">
+    <div class="oog">Sfeer</div>
+    <h2>Zo kan het voelen <span class="label-ai">AI-sfeerbeeld</span></h2>
+    <p class="stil" style="margin-top:14px">Deze beelden zijn met AI gemaakt op basis van de renders. Ze geven de sfeer weer, niet de exacte maten. Wat erin klopt met het plan staat inmiddels ook in het model: hortensia's en lavendel langs de leistenen muur, olijfboompjes in grote potten, uplights op de muur, een jute kleed met lantaarns in de veranda, de eettafel met parasol op het terras en het glazen bovenlicht boven de poortdeur.</p>
+    <div class="impressies">
+      <button class="tegel" data-src="img/impressie-1.jpg"><img src="img/impressie-1.jpg" alt="" loading="lazy"><span>Hek, schuurgevel en veranda</span></button>
+      <button class="tegel" data-src="img/impressie-2.jpg"><img src="img/impressie-2.jpg" alt="" loading="lazy"><span>Over het zwembad naar de unit</span></button>
+      <button class="tegel" data-src="img/impressie-3.jpg"><img src="img/impressie-3.jpg" alt="" loading="lazy"><span>Vanuit de veranda naar het huis</span></button>
+      <button class="tegel" data-src="img/impressie-4.jpg"><img src="img/impressie-4.jpg" alt="" loading="lazy"><span>De poort met bovenlicht</span></button>
+    </div>
+  </div>
+</section>
+
+<section id="materialen">
+  <div class="wrap">
+    <div class="oog">Materialen</div>
+    <h2>Wat je ziet en waar het van is</h2>
+    <div class="materialen">
+      <div class="mat"><i style="background:#C99A63"></i><div><b>Constructie Douglas</b><small>Staanders <code>145×145</code>, liggers <code>145×220</code>, dakbalken <code>45×170</code> h.o.h. 470, kniekoppen <code>95×95</code>.</small></div></div>
+      <div class="mat"><i style="background:repeating-linear-gradient(90deg,#9C6A40 0 6px,#111 6px 12px)"></i><div><b>Lattenwanden</b><small>Thermowood <code>28×45</code> verticaal, h.o.h. 90, op zwarte gevelplaat. Schuurgevel aan het water en de binnenkant van de veranda.</small></div></div>
+      <div class="mat"><i style="background:repeating-linear-gradient(180deg,#1C1D1F 0 9px,#000 9px 10px)"></i><div><b>Zwart rabat</b><small>Horizontaal <code>21×145</code> op regelwerk <code>45×95</code>. Overige gevels van de schuur en de buitenkant van de veranda.</small></div></div>
+      <div class="mat"><i style="background:#151515"></i><div><b>Plat dak</b><small>Underlayment <code>18 mm</code> met EPDM, zwarte boeiboorden en een aluminium daktrim. De poort heeft open balken.</small></div></div>
+      <div class="mat"><i style="background:linear-gradient(135deg,#D8EEF0,#9FC9CC)"></i><div><b>Lichtstraat</b><small>Vlakke glazen lichtstraat, dagmaat <code>1.200×2.000</code>, op een opstand van 150 mm.</small></div></div>
+      <div class="mat"><i style="background:linear-gradient(90deg,#C99A63 0 30%,#DCEFF0 30%)"></i><div><b>Zwembadhek</b><small>Gelaagd gehard glas <code>8.8.2</code>, hoogte <code>1.000</code>, Douglas palen <code>95×95</code> met RVS-klemmen. Twee zelfsluitende poortjes met kinderslot.</small></div></div>
+      <div class="mat"><i style="background:#77736C"></i><div><b>Vloer</b><small>Keramische tegels <code>60×60</code> in schuur en veranda, stapstenen in grind in de poort.</small></div></div>
+      <div class="mat"><i style="background:radial-gradient(circle at 40% 40%,#FFD9A8,#2B2B2B 60%)"></i><div><b>Licht</b><small>Up/down-wandlampen 2700K, inbouwspots in het lattenplafond, uplights op de leistenen muur.</small></div></div>
+    </div>
+  </div>
+</section>
+
+<section id="open">
+  <div class="wrap">
+    <div class="oog">Nog te beslissen</div>
+    <h2>Open punten</h2>
+    <ul class="punten">
+      <li><b>Hoogte</b><span>De unit is 3,00 m hoog. De lichtstraat steekt daar ongeveer 18 cm bovenuit. Of dat vergunningsvrij mag, moet bij de gemeente worden nagevraagd. Anders kan de constructie 20 cm lager.</span></li>
+      <li><b>Regenwater</b><span>Achter ligt de erfgrens, dus daar kan geen goot komen. Het water loopt via afschot naar de zijkanten af.</span></li>
+      <li><b>Achterom</b><span>De poortdeur komt uit op de achterschutting. Nog na te gaan of daar een achterpad of doorgang is.</span></li>
+      <li><b>Constructie</b><span>De balkmaten zijn een eerste opzet. Een constructeur of de leverancier moet de liggers over de veranda en de fundering met poeren of schroefpalen controleren.</span></li>
+    </ul>
+  </div>
+</section>
+
+<section class="slot">
+  <div class="wrap">
+    <div class="oog">Zelf rondlopen</div>
+    <h2>Loop door de tuin</h2>
+    <p class="stil">Het 3D-model draait in je browser. Je loopt rond met de muis en het toetsenbord, of op je telefoon met een joystick. Je kunt schakelen tussen dag en avond en springen naar vaste standpunten.</p>
+    <a class="knop" href="3d.html">Open het 3D-model →</a>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">Ontwerpstudie, oktober 2026. Model en renders in Blender (Cycles). Planten deels van Poly Haven (CC0). Sfeerbeelden gemaakt met AI.</div>
+</footer>
+
+<dialog id="groot" aria-label="Vergroting">
+  <button type="button" id="sluit">Sluiten</button>
+  <img id="grootImg" alt="">
+  <p id="grootTxt"></p>
+</dialog>
+
+<script>
+const dag = document.getElementById('tDag'), avond = document.getElementById('tAvond');
+function zet(isDag) {
+  dag.setAttribute('aria-pressed', isDag); avond.setAttribute('aria-pressed', !isDag);
+  document.getElementById('rasterDag').hidden = !isDag; document.getElementById('rasterAvond').hidden = isDag;
+}
+dag.onclick = () => zet(true); avond.onclick = () => zet(false);
+const dlg = document.getElementById('groot');
+document.querySelectorAll('.tegel').forEach(t => t.addEventListener('click', () => {
+  document.getElementById('grootImg').src = t.dataset.src;
+  document.getElementById('grootTxt').textContent = t.querySelector('span')?.textContent || '';
+  dlg.showModal();
+}));
+document.getElementById('sluit').onclick = () => dlg.close();
+dlg.addEventListener('click', e => { if (e.target === dlg) dlg.close(); });
+</script>
+</body>
+</html>

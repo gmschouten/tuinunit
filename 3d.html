@@ -1,0 +1,296 @@
+<!doctype html>
+<html lang="nl">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>De Tuinunit · 3D-model</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@112,700;112,800&family=Figtree:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: volledig scherm 3D; daaroverheen zwevende panelen in rookglas, als een bouwbord op de bouwplaats.
+   Bewust één (donkere) uitstraling: de panelen liggen over het 3D-beeld, niet over een pagina. */
+:root {
+  --ink: #F3EEE6;          /* tekst */
+  --mute: #B9B0A3;         /* secundaire tekst */
+  --panel: rgba(22, 21, 20, 0.78);
+  --line: rgba(243, 238, 230, 0.16);
+  --douglas: #D8A266;      /* accent: Douglas-hout */
+  --night: #121212;        /* achtergrond tijdens laden */
+  --f-display: "Archivo", "Helvetica Neue", Arial, sans-serif;
+  --f-body: "Figtree", "Helvetica Neue", Arial, sans-serif;
+  --f-data: "JetBrains Mono", ui-monospace, Menlo, monospace;
+  color-scheme: dark;
+}
+html, body { height: 100%; }
+body { background: var(--night); color: var(--ink); font-family: var(--f-body); overflow: hidden; }
+#scene { position: fixed; inset: 0; width: 100%; height: 100%; display: block; touch-action: none; }
+.hud { position: fixed; z-index: 2; background: var(--panel); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  border: 1px solid var(--line); border-radius: 10px; }
+#kop { top: calc(12px + env(safe-area-inset-top, 0px)); left: max(16px, env(safe-area-inset-left, 0px));
+  padding: 12px 14px; max-width: min(360px, calc(100vw - 32px)); display: grid; gap: 8px; }
+#kop .terug { font: 500 0.78rem var(--f-body); color: var(--douglas); text-decoration: none; }
+#kop h1 { margin: 0; font-family: var(--f-display); font-stretch: 112%; font-weight: 800; font-size: 1.15rem; letter-spacing: -0.01em; text-wrap: balance; }
+#kop .maat { font-family: var(--f-data); font-size: 0.72rem; color: var(--douglas); letter-spacing: 0.02em; }
+#kop p { margin: 0; font-size: 0.82rem; line-height: 1.45; color: var(--mute); }
+#knoppen { display: flex; flex-wrap: wrap; gap: 6px; }
+button { font: 500 0.78rem var(--f-body); color: var(--ink); background: rgba(255,255,255,0.06); border: 1px solid var(--line);
+  border-radius: 999px; padding: 6px 11px; cursor: pointer; }
+button:hover { border-color: var(--douglas); }
+button:focus-visible { outline: 2px solid var(--douglas); outline-offset: 2px; }
+button[aria-pressed="true"] { background: var(--douglas); color: #1A1410; border-color: var(--douglas); }
+#plekken { bottom: calc(12px + env(safe-area-inset-bottom, 0px)); left: max(16px, env(safe-area-inset-left, 0px));
+  right: max(16px, env(safe-area-inset-right, 0px)); margin-inline: auto; width: fit-content; max-width: calc(100vw - 32px);
+  padding: 8px; display: flex; gap: 6px; overflow-x: auto; }
+#plekken .lbl { font: 500 0.66rem var(--f-data); text-transform: uppercase; letter-spacing: 0.08em; color: var(--mute); align-self: center; padding-inline: 6px 2px; white-space: nowrap; }
+#plekken button { white-space: nowrap; }
+#hulp { top: calc(12px + env(safe-area-inset-top, 0px)); right: max(16px, env(safe-area-inset-right, 0px)); padding: 10px 12px;
+  font-size: 0.76rem; color: var(--mute); line-height: 1.6; max-width: 230px; }
+#hulp kbd { font-family: var(--f-data); font-size: 0.7rem; color: var(--ink); border: 1px solid var(--line); border-radius: 4px; padding: 0 4px; }
+#laden { position: fixed; inset: 0; z-index: 5; display: grid; place-items: center; background: var(--night); }
+[hidden] { display: none !important; }
+#laden div { display: grid; gap: 10px; justify-items: center; font-family: var(--f-data); font-size: 0.8rem; color: var(--mute); }
+#balk { width: 180px; height: 3px; background: var(--line); border-radius: 2px; overflow: hidden; }
+#balk i { display: block; height: 100%; width: 0; background: var(--douglas); transition: width .2s; }
+#joy { position: fixed; z-index: 3; left: max(24px, calc(env(safe-area-inset-left, 0px) + 24px)); bottom: calc(76px + env(safe-area-inset-bottom, 0px));
+  width: 112px; height: 112px; border-radius: 50%; border: 1px solid var(--line); background: rgba(22,21,20,0.35); touch-action: none; }
+#joy i { position: absolute; left: 50%; top: 50%; width: 46px; height: 46px; margin: -23px 0 0 -23px; border-radius: 50%; background: rgba(216,162,102,0.75); }
+#kruis { position: fixed; left: 50%; top: 50%; width: 6px; height: 6px; margin: -3px; border-radius: 50%; background: rgba(255,255,255,0.7); z-index: 2; pointer-events: none; }
+@media (max-width: 720px) { #hulp { display: none; } #kop p { display: none; } }
+@media (hover: hover) and (pointer: fine) { #joy { display: none; } }
+@media (prefers-reduced-motion: reduce) { #balk i { transition: none; } }
+</style>
+
+<canvas id="scene" aria-label="3D-model van de veranda met schuur en poort"></canvas>
+<div id="kruis"></div>
+<section id="kop" class="hud">
+  <a class="terug" href="index.html">← Terug naar de presentatie</a>
+  <h1>De tuinunit</h1>
+  <div class="maat">10.000 mm breed · diepte 2.750 / 3.750 mm · H 3.000 mm</div>
+  <p>Schuur 4,6 m direct achter het zwembad (lattengevel aan het water), poort 1,8 m in het midden, veranda 3,6 × 3,75 m met lichtstraat. Glazen hek 1,00 m rond het bad met twee poortjes.</p>
+  <div id="knoppen">
+    <button id="bDag" aria-pressed="true">Overdag</button>
+    <button id="bAvond" aria-pressed="false">Avond</button>
+    <button id="bDak" aria-pressed="false">Dak weg</button>
+  </div>
+</section>
+<aside id="hulp" class="hud">
+  Klik in het beeld om rond te kijken met de muis.<br>
+  <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> of pijltjes: lopen<br>
+  <kbd>Shift</kbd>: sneller · <kbd>Esc</kbd>: muis los
+</aside>
+<nav id="plekken" class="hud" aria-label="Standpunten"><span class="lbl">Ga naar</span></nav>
+<div id="joy" aria-hidden="true"><i></i></div>
+<div id="laden"><div><span id="ladenTxt">Model laden…</span><div id="balk"><i></i></div></div></div>
+
+<script>
+addEventListener('error', e => { const t = document.getElementById('ladenTxt'); if (t) t.textContent = 'Fout bij laden: ' + (e.message || e.error); });
+addEventListener('unhandledrejection', e => { const t = document.getElementById('ladenTxt'); if (t) t.textContent = 'Fout bij laden: ' + (e.reason?.message || e.reason); });
+</script>
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+} }
+</script>
+<script type="module">
+import * as THREE from 'three';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+
+const canvas = document.getElementById('scene');
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(70, 1, 0.05, 400);
+camera.rotation.order = 'YXZ';
+
+// ---------- lucht (verticaal verloop), dag en avond
+function luchtTex(top, mid, hor) {
+  const c = document.createElement('canvas'); c.width = 4; c.height = 256;
+  const g = c.getContext('2d'); const gr = g.createLinearGradient(0, 0, 0, 256);
+  gr.addColorStop(0, top); gr.addColorStop(0.55, mid); gr.addColorStop(1, hor);
+  g.fillStyle = gr; g.fillRect(0, 0, 4, 256);
+  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; return t;
+}
+const LUCHT = { dag: luchtTex('#5E8FC9', '#A9C6E2', '#E4ECF2'), avond: luchtTex('#0E1424', '#2B2F4A', '#7A5A55') };
+
+const hemi = new THREE.HemisphereLight(0xdfeaf5, 0x8a8174, 1.1);
+scene.add(hemi);
+const zon = new THREE.DirectionalLight(0xfff1e0, 2.6);
+// zelfde zonrichting als in de Blender-renders
+const zonDir = new THREE.Vector3(0.45, -0.61, -0.65).normalize();
+const zonDoel = new THREE.Vector3(5.5, 0, -9);
+zon.position.copy(zonDoel).addScaledVector(zonDir, -30);
+zon.target.position.copy(zonDoel);
+zon.castShadow = true;
+zon.shadow.mapSize.set(4096, 4096);
+Object.assign(zon.shadow.camera, { left: -14, right: 14, top: 14, bottom: -14, near: 1, far: 70 });
+zon.shadow.bias = -0.0004; zon.shadow.normalBias = 0.02;
+scene.add(zon, zon.target);
+
+// ---------- textuurtjes (houtnerf, tegels) op canvas
+function canvasTex(w, h, teken, rx, ry) {
+  const c = document.createElement('canvas'); c.width = w; c.height = h; teken(c.getContext('2d'), w, h);
+  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace;
+  t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(rx, ry); t.anisotropy = 8; return t;
+}
+let seed = 7; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+function hout(ctx, w, h) {   // nerf loopt langs u (horizontaal in het canvas)
+  ctx.fillStyle = '#e9e9e9'; ctx.fillRect(0, 0, w, h);
+  for (let i = 0; i < 70; i++) {
+    const y = rnd() * h, a = 0.05 + rnd() * 0.12, amp = 1 + rnd() * 4, f = 0.004 + rnd() * 0.01;
+    ctx.strokeStyle = `rgba(90,60,30,${a})`; ctx.lineWidth = 0.6 + rnd() * 2.2; ctx.beginPath();
+    for (let x = 0; x <= w; x += 8) ctx.lineTo(x, y + Math.sin(x * f + i) * amp);
+    ctx.stroke();
+  }
+}
+function tegel(ctx, w, h) {
+  ctx.fillStyle = '#efefef'; ctx.fillRect(0, 0, w, h);
+  for (let i = 0; i < 2000; i++) { ctx.fillStyle = `rgba(0,0,0,${rnd() * 0.05})`; ctx.fillRect(rnd() * w, rnd() * h, 3, 3); }
+  ctx.strokeStyle = 'rgba(40,40,40,0.55)'; ctx.lineWidth = 3;
+  for (const p of [0, w / 2]) { ctx.beginPath(); ctx.moveTo(p, 0); ctx.lineTo(p, h); ctx.stroke(); ctx.beginPath(); ctx.moveTo(0, p); ctx.lineTo(w, p); ctx.stroke(); }
+}
+const TEX = {
+  hout: canvasTex(1024, 256, hout, 0.7, 2.8),       // 1,4 m x 0,36 m per herhaling
+  tegel: canvasTex(512, 512, tegel, 1 / 1.2, 1 / 1.2),
+};
+
+// ---------- data + model
+const balk = document.querySelector('#balk i');
+const data = await fetch('model/scene.json').then(r => r.json());
+const gltf = await new GLTFLoader().loadAsync('model/veranda.glb', e => {
+  if (e.total) balk.style.width = Math.round(100 * e.loaded / e.total) + '%';
+});
+const model = gltf.scene;
+const lampGlas = [], dakDelen = [];
+model.traverse(o => {
+  if (!o.isMesh) return;
+  o.castShadow = true; o.receiveShadow = true;
+  const mats = Array.isArray(o.material) ? o.material : [o.material];
+  for (const m of mats) {
+    const n = (m.name || '').toLowerCase();
+    const isGlas = /(^|\s|lamp)glas/.test(n) && !n.includes('douglas');
+    if (!isGlas && !n.includes('water')) { m.transparent = false; m.opacity = 1; m.depthWrite = true; }
+    if (/douglas|thermowood|teak|regelwerk|vlonder/.test(n)) { m.map = TEX.hout; m.roughness = 0.75; m.needsUpdate = true; }
+    if (n.includes('tegel 60')) { m.map = TEX.tegel; m.needsUpdate = true; }
+    if (n.includes('water')) { m.transparent = true; m.opacity = 0.7; m.roughness = 0.05; o.castShadow = false; }
+    if (/shrub|searsia|grass|potted|leaves|twigs/.test(n) && m.map) { m.alphaTest = 0.5; m.transparent = false; m.side = THREE.DoubleSide; o.castShadow = true; }
+    if (isGlas) { m.transparent = true; m.opacity = n.includes('lamp') ? 1 : 0.25; o.castShadow = false; }
+    if (n.includes('lampglas')) lampGlas.push(m);
+  }
+  const on = (o.name || '') + ' ' + (o.parent?.name || '');
+  if (/Dakbeschot|Lichtstraat|Daktrim|Boeiboord/.test(on)) dakDelen.push(o);
+});
+scene.add(model);
+
+// lampen (alleen 's avonds aan)
+const lampen = data.lampen.filter(l => l.d[1] < 0 && !/Muurlamp/.test(l.naam)).map(l => {
+  const s = new THREE.SpotLight(0xffc488, 0, 9, Math.min(l.hoek / 2 * 1.15, 1.2), 0.6, 1.6);
+  s.position.set(...l.p); s.target.position.set(l.p[0] + l.d[0], l.p[1] + l.d[1], l.p[2] + l.d[2]);
+  s.userData.w = l.w; scene.add(s, s.target); return s;
+});
+
+function stand(dag) {
+  document.getElementById('bDag').setAttribute('aria-pressed', dag);
+  document.getElementById('bAvond').setAttribute('aria-pressed', !dag);
+  scene.background = dag ? LUCHT.dag : LUCHT.avond;
+  scene.fog = new THREE.Fog(dag ? 0xdfe8ef : 0x1a1c28, 30, 120);
+  hemi.intensity = dag ? 1.1 : 0.12; hemi.color.set(dag ? 0xdfeaf5 : 0x5866a0);
+  zon.intensity = dag ? 2.6 : 0.08; zon.color.set(dag ? 0xfff1e0 : 0xff9a60);
+  renderer.toneMappingExposure = dag ? 1.0 : 1.25;
+  for (const s of lampen) s.intensity = dag ? 0 : s.userData.w * 0.55;
+  for (const m of lampGlas) { m.emissive = new THREE.Color(0xffc488); m.emissiveIntensity = dag ? 0 : 3; }
+}
+stand(true);
+document.getElementById('bDag').onclick = () => stand(true);
+document.getElementById('bAvond').onclick = () => stand(false);
+document.getElementById('bDak').onclick = e => {
+  const weg = e.currentTarget.getAttribute('aria-pressed') !== 'true';
+  e.currentTarget.setAttribute('aria-pressed', weg);
+  dakDelen.forEach(o => o.visible = !weg);
+};
+
+// ---------- lopen
+const VLOER = -0.2, OOG = 1.62, R = 0.22;
+const botsen = data.botsen;   // [x0, x1, z0, z1]
+const pos = new THREE.Vector3(7.3, VLOER + OOG, -6.9);
+let yaw = 0, pitch = 0, doelHoogte = VLOER + OOG;
+function ga(sp) {
+  pos.set(...sp.p); doelHoogte = VLOER + OOG;
+  yaw = Math.atan2(-sp.d[0], -sp.d[2]); pitch = Math.asin(Math.max(-1, Math.min(1, sp.d[1])));
+}
+const nav = document.getElementById('plekken');
+data.standpunten.forEach((sp, i) => {
+  const b = document.createElement('button'); b.textContent = sp.naam.replace(/^vanuit de /, '').replace(/^in de /, '');
+  b.title = sp.naam; b.onclick = () => ga(sp); nav.appendChild(b);
+});
+ga(data.standpunten[0]);
+
+function vrij(x, z) {
+  for (const b of botsen) if (x > b[0] - R && x < b[1] + R && z > b[2] - R && z < b[3] + R) return false;
+  return x > 0.3 && x < 10.75 && z > -15.35 && z < 0.2;
+}
+const keys = new Set();
+addEventListener('keydown', e => { keys.add(e.code); });
+addEventListener('keyup', e => keys.delete(e.code));
+addEventListener('blur', () => keys.clear());
+
+// muis: pointer lock, met slepen als terugval
+canvas.addEventListener('click', () => { try { const p = canvas.requestPointerLock?.(); p?.catch?.(() => {}); } catch (_) {} });
+addEventListener('mousemove', e => {
+  if (document.pointerLockElement === canvas || (e.buttons & 1)) {
+    yaw -= e.movementX * 0.0022; pitch -= e.movementY * 0.0022;
+    pitch = Math.max(-1.45, Math.min(1.45, pitch));
+  }
+});
+// touch: rechterhelft kijken, joystick lopen
+const joy = document.getElementById('joy'), knop = joy.querySelector('i');
+let joyV = { x: 0, y: 0 }, joyId = null, kijkId = null, kijkLast = null;
+joy.addEventListener('pointerdown', e => { joyId = e.pointerId; joy.setPointerCapture(e.pointerId); joyMove(e); });
+joy.addEventListener('pointermove', e => { if (e.pointerId === joyId) joyMove(e); });
+const joyEnd = e => { if (e.pointerId === joyId) { joyId = null; joyV = { x: 0, y: 0 }; knop.style.transform = ''; } };
+joy.addEventListener('pointerup', joyEnd); joy.addEventListener('pointercancel', joyEnd);
+function joyMove(e) {
+  const r = joy.getBoundingClientRect(); let x = e.clientX - r.left - r.width / 2, y = e.clientY - r.top - r.height / 2;
+  const m = Math.hypot(x, y), max = r.width / 2 - 10; if (m > max) { x *= max / m; y *= max / m; }
+  knop.style.transform = `translate(${x}px, ${y}px)`; joyV = { x: x / max, y: y / max };
+}
+canvas.addEventListener('pointerdown', e => { if (e.pointerType !== 'mouse') { kijkId = e.pointerId; kijkLast = [e.clientX, e.clientY]; } });
+canvas.addEventListener('pointermove', e => {
+  if (e.pointerId !== kijkId) return;
+  yaw -= (e.clientX - kijkLast[0]) * 0.005; pitch -= (e.clientY - kijkLast[1]) * 0.005;
+  pitch = Math.max(-1.45, Math.min(1.45, pitch)); kijkLast = [e.clientX, e.clientY];
+});
+canvas.addEventListener('pointerup', e => { if (e.pointerId === kijkId) kijkId = null; });
+
+function resize() {
+  const w = innerWidth, h = innerHeight; renderer.setSize(w, h, false);
+  camera.aspect = w / h; camera.fov = w < h ? 80 : 70; camera.updateProjectionMatrix();
+}
+addEventListener('resize', resize); resize();
+
+const klok = new THREE.Clock();
+renderer.setAnimationLoop(() => {
+  const dt = Math.min(klok.getDelta(), 0.05);
+  let f = 0, s = 0;
+  if (keys.has('KeyW') || keys.has('ArrowUp')) f += 1;
+  if (keys.has('KeyS') || keys.has('ArrowDown')) f -= 1;
+  if (keys.has('KeyD') || keys.has('ArrowRight')) s += 1;
+  if (keys.has('KeyA') || keys.has('ArrowLeft')) s -= 1;
+  f -= joyV.y; s += joyV.x;
+  const v = (keys.has('ShiftLeft') || keys.has('ShiftRight') ? 3.2 : 1.5) * dt;
+  if (f || s) {
+    const fx = -Math.sin(yaw), fz = -Math.cos(yaw), rx = Math.cos(yaw), rz = -Math.sin(yaw);
+    const dx = (fx * f + rx * s) * v, dz = (fz * f + rz * s) * v;
+    if (vrij(pos.x + dx, pos.z)) pos.x += dx;
+    if (vrij(pos.x, pos.z + dz)) pos.z += dz;
+    pos.y += (doelHoogte - pos.y) * Math.min(1, dt * 3);
+  }
+  camera.position.copy(pos); camera.rotation.set(pitch, yaw, 0);
+  renderer.render(scene, camera);
+});
+document.getElementById('laden').hidden = true;
+</script>
